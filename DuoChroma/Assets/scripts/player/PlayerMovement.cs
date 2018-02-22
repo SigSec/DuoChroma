@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PlayerMovement : MonoBehaviour {
     // Set up variables.
@@ -86,9 +87,14 @@ public class PlayerMovement : MonoBehaviour {
 
     private void OnCollisionStay2D(Collision2D collision2D)
     {
-        if(collision2D.collider.sharedMaterial.name == "tile")
+        try
         {
-            _hasJumped = _hasStomped = false;
+            if (collision2D.collider.sharedMaterial.name == "tile")
+            {
+                _hasJumped = _hasStomped = false;
+            }
         }
+        catch(NullReferenceException e)
+        { print(e); }
     }
 }
