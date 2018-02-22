@@ -82,12 +82,13 @@ public class PlayerMovement : MonoBehaviour {
             _playerRigidbody.velocity = new Vector2(_playerRigidbody.velocity.x, 0 - yVelocityCap);
         }
         _playerRigidbody.AddForce(new Vector2(_horizontalInput * runningSpeed, _verticalInput * jumpForce));
-
-        _playerTransform.position = new Vector2(Mathf.Floor(_playerTransform.position.x * 5000) / 5000, Mathf.Floor(_playerTransform.position.y * 5000) / 5000);
     }
 
-    private void OnCollisionStay2D(Collision2D collider)
+    private void OnCollisionStay2D(Collision2D collision2D)
     {
-        print(collider.gameObject);
+        if(collision2D.collider.sharedMaterial.name == "tile")
+        {
+            _hasJumped = _hasStomped = false;
+        }
     }
 }

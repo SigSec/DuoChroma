@@ -25,7 +25,7 @@ public class TextTrigger : MonoBehaviour {
         _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    void OnCollisionStay2D(Collision2D collision)
+    void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Player")
         {
@@ -42,6 +42,7 @@ public class TextTrigger : MonoBehaviour {
         }
         else if (!isFading && _colour.a < 1)
         {
+            print(_colour.a);
             _colour.a += fadingSpeed * Time.deltaTime;
         }
         _spriteRenderer.color = _colour;

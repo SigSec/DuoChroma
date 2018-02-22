@@ -14,6 +14,8 @@ public class FollowPlayer : MonoBehaviour {
 
     private void FixedUpdate()
     {
-        _cameraTransform.position = new Vector3(_playerTransform.position.x, _playerTransform.position.y, _cameraTransform.position.z);
+        _cameraTransform.position = new Vector3(Mathf.Ceil(_playerTransform.position.x * 100) / 100,
+                                                Mathf.Ceil(_playerTransform.position.y * 100) / 100,
+                                                _cameraTransform.position.z);
     }
 }
