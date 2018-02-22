@@ -88,9 +88,6 @@ public class PlayerMovement : MonoBehaviour {
 
     private void OnCollisionStay2D(Collision2D collider)
     {
-        if (collider.collider.sharedMaterial.name == "tile")
-        {
-            _hasJumped = _hasStomped = false;
-        }
+        print(collider.gameObject);
     }
 }
