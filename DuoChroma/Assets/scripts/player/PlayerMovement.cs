@@ -5,6 +5,8 @@ using System;
 
 public class PlayerMovement : MonoBehaviour {
     // Set up variables.
+    public KeyCode escapeKey = KeyCode.Escape;
+
     public float xVelocityCap = 8.0f;
     public float yVelocityCap = 10.0f;
 
@@ -31,6 +33,11 @@ public class PlayerMovement : MonoBehaviour {
         // Get user input.
         _horizontalInput = Input.GetAxisRaw("Horizontal");
         _verticalInput = Input.GetAxisRaw("Vertical");
+
+        if (Input.GetKeyDown(escapeKey))
+        {
+            Application.Quit();
+        }
 
         // Checks which side the user is on.
         if (_playerTransform.position.y > 0)
