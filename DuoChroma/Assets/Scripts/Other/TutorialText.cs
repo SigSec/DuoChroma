@@ -12,50 +12,43 @@ public class TutorialText : MonoBehaviour {
 	public UnityEngine.UI.Text[] arrayOfText;
 	private GlobalVarables _global;
 
+	private string[] arrayOfActiveColours;
+
 	private void Awake()
 	{
 		_global = GameObject.Find("Persistent").GetComponent<GlobalVarables>();
+
+		arrayOfActiveColours = new string[arrayOfText.Length];
+
+		// Set the colours for each text box to depend on its vertical position
+		for (int i = 0; i < arrayOfText.Length; i++)
+		{
+			if (arrayOfText[i].gameObject.GetComponent<RectTransform>().anchoredPosition.y > 750)
+			{
+				arrayOfText[i].color = new Color(138f / 255f, 028f / 255f, 053f / 255f, 1f);
+				arrayOfActiveColours[i] = "#d13b3b";
+			}
+
+			else
+			{
+				arrayOfText[i].color = new Color(007f / 255f, 049f / 255f, 054f / 255f, 1f);
+				arrayOfActiveColours[i] = "#155748";
+			}
+		}
 	}
 
 	private void LateUpdate()
 	{
-		//                                r            g            b           a    hex values
-		Color darkRed =		new Color(138f / 255f, 028f / 255f, 053f/ 255f, 1f); // #8a1c35
-		//    lightRed                                                              #d13b3b
-		Color darkGreen =	new Color(007f / 255f, 049f / 255f, 054f/ 255f, 1f); // #073136
-		//    lightGreen                                                            #155748
-
-		arrayOfText[0].color = darkRed;
-		arrayOfText[0].text = "Press <color=#d13b3b>" + _global.left + "</color> or <color=#d13b3b>" + _global.leftAlt + "</color> to walk left";
-
-		arrayOfText[1].color = darkRed;
-		arrayOfText[1].text = "Press <color=#d13b3b>" + _global.right + "</color> or <color=#d13b3b>" + _global.rightAlt + "</color> to walk right";
-
-		arrayOfText[2].color = darkRed;
-		arrayOfText[2].text = "Press <color=#d13b3b>" + _global.restart + "</color> to restart the level";
-
-		arrayOfText[3].color = darkRed;
-		arrayOfText[3].text = "Press <color=#d13b3b>" + _global.quit + "</color> to quit";
-
-		arrayOfText[4].color = darkRed;
-		arrayOfText[4].text = "Press <color=#d13b3b>" + _global.up + "</color> or <color=#d13b3b>" + _global.upAlt + "</color> to jump";
-
-		arrayOfText[5].color = darkRed;
-		arrayOfText[5].text = "Press <color=#d13b3b>" + _global.menu + "</color> to open and close the menu";
-
-		arrayOfText[6].color = darkGreen;
-		arrayOfText[6].text = "Now press <color=#155748>" + _global.down + "</color> or <color=#155748>" + _global.downAlt + "</color> to jump";
-
-		arrayOfText[7].color = darkGreen;
-		arrayOfText[7].text = "You can remap your controls in the <color=#155748> Options </color> menu";
-
-		arrayOfText[8].color = darkRed;
-		arrayOfText[8].text = "...One side is getting darker, while the other brighter, for there must be <color=#d13b3b> balance </color>";
-
-		arrayOfText[9].color = darkRed;
-		arrayOfText[9].text = "...Gems <color=#d13b3b>brighten</color> up the side you are on";
-
-		arrayOfText[10].color = darkGreen;
-		arrayOfText[10].text = "...Your health depends on the <color=#155748>brightness</color> of your side, Let your side fade out and you die";
+		arrayOfText[0].text = "Press <color=" + arrayOfActiveColours[0] + ">" + _global.left + "</color> or <color=" + arrayOfActiveColours[0] + ">" + _global.leftAlt + "</color> to walk left";
+		arrayOfText[1].text = "Press <color=" + arrayOfActiveColours[1] + ">" + _global.right + "</color> or <color=" + arrayOfActiveColours[1] + ">" + _global.rightAlt + "</color> to walk right";
+		arrayOfText[2].text = "Press <color=" + arrayOfActiveColours[2] + ">" + _global.restart + "</color> to restart the level";
+		arrayOfText[3].text = "Press <color=" + arrayOfActiveColours[3] + ">" + _global.quit + "</color> to quit";
+		arrayOfText[4].text = "Press <color=" + arrayOfActiveColours[4] + ">" + _global.up + "</color> or <color=" + arrayOfActiveColours[4] + ">" + _global.upAlt + "</color> to jump";
+		arrayOfText[5].text = "Press <color=" + arrayOfActiveColours[5] + ">" + _global.menu + "</color> to open and close the menu";
+		arrayOfText[6].text = "Now press <color=" + arrayOfActiveColours[6] + ">" + _global.down + "</color> or <color=" + arrayOfActiveColours[6] + ">" + _global.downAlt + "</color> to jump";
+		arrayOfText[7].text = "You can remap your controls in the <color=" + arrayOfActiveColours[7] + ">Options</color> menu";
+		arrayOfText[8].text = "...One side is getting darker, while the other brighter, for there must be <color=" + arrayOfActiveColours[8] + ">balance</color>";
+		arrayOfText[9].text = "...Gems <color=" + arrayOfActiveColours[9] + ">brighten</color> up the side you are on";
+		arrayOfText[10].text = "<color=" + arrayOfActiveColours[10] + ">Keys</color> open doors on either side";
 	}
 }
