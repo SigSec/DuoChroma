@@ -752,11 +752,60 @@ Prefab:
       propertyPath: m_FontData.m_HorizontalOverflow
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 223150022061416416, guid: 6271909ed83d68540a710e7cc0ca214c,
+        type: 2}
+      propertyPath: m_PixelPerfect
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 223469523048881228, guid: 6271909ed83d68540a710e7cc0ca214c,
+        type: 2}
+      propertyPath: m_PixelPerfect
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 223469523048881228, guid: 6271909ed83d68540a710e7cc0ca214c,
+        type: 2}
+      propertyPath: m_RenderMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 223469523048881228, guid: 6271909ed83d68540a710e7cc0ca214c,
+        type: 2}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 972886883}
+    - target: {fileID: 223799848559507328, guid: 6271909ed83d68540a710e7cc0ca214c,
+        type: 2}
+      propertyPath: m_RenderMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 223799848559507328, guid: 6271909ed83d68540a710e7cc0ca214c,
+        type: 2}
+      propertyPath: m_PixelPerfect
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 223799848559507328, guid: 6271909ed83d68540a710e7cc0ca214c,
+        type: 2}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 972886883}
+    - target: {fileID: 223469523048881228, guid: 6271909ed83d68540a710e7cc0ca214c,
+        type: 2}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 223799848559507328, guid: 6271909ed83d68540a710e7cc0ca214c,
+        type: 2}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114319916648077904, guid: 6271909ed83d68540a710e7cc0ca214c, type: 2}
     - {fileID: 114501014576771554, guid: 6271909ed83d68540a710e7cc0ca214c, type: 2}
     - {fileID: 114230578067255712, guid: 6271909ed83d68540a710e7cc0ca214c, type: 2}
     - {fileID: 114158828598120728, guid: 6271909ed83d68540a710e7cc0ca214c, type: 2}
+    - {fileID: 114970642181633076, guid: 6271909ed83d68540a710e7cc0ca214c, type: 2}
+    - {fileID: 114694873528724070, guid: 6271909ed83d68540a710e7cc0ca214c, type: 2}
+    - {fileID: 114090805013109932, guid: 6271909ed83d68540a710e7cc0ca214c, type: 2}
+    - {fileID: 114871409487573720, guid: 6271909ed83d68540a710e7cc0ca214c, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 6271909ed83d68540a710e7cc0ca214c, type: 2}
   m_IsPrefabParent: 0
 --- !u!114 &353715338

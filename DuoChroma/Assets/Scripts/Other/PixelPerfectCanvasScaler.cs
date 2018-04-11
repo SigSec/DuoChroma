@@ -20,8 +20,9 @@ public class PixelPerfectCanvasScaler : MonoBehaviour
 		_global = GameObject.Find("Persistent").GetComponent<GlobalVarables>();
 	}
 
-	private void Update()
+	private void LateUpdate()
 	{
 		_canvas.scaleFactor = _global.pixelSize * _global.uiScale;
+		print(_canvas.scaleFactor);
 	}
 }
