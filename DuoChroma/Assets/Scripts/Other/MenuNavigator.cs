@@ -15,6 +15,7 @@ public class MenuNavigator : MonoBehaviour {
 	public UnityEngine.UI.Text[] arrayOfSettings;
 	public UnityEngine.UI.Text[] arrayOfKeys;
 
+	public bool alwaysPaused = false;
 	public bool isPaused;
 
 	private GlobalVarables _global;
@@ -79,7 +80,7 @@ public class MenuNavigator : MonoBehaviour {
 			menu.gameObject.SetActive(false);
 		}
 
-		if (Input.GetKeyDown(_global.menu))
+		if (Input.GetKeyDown(_global.menu) && !alwaysPaused)
 		{
 			isPaused = !isPaused;
 		}

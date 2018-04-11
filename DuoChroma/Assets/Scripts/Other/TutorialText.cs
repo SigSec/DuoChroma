@@ -51,5 +51,11 @@ public class TutorialText : MonoBehaviour {
 
 		arrayOfText[8].color = darkRed;
 		arrayOfText[8].text = "...One side is getting darker, while the other brighter, for there must be <color=#d13b3b> balance </color>";
+
+		arrayOfText[9].color = darkRed;
+		arrayOfText[9].text = "...Gems <color=#d13b3b>brighten</color> up the side you are on";
+
+		arrayOfText[10].color = darkGreen;
+		arrayOfText[10].text = "...Your health depends on the <color=#155748>brightness</color> of your side, Let your side fade out and you die";
 	}
 }

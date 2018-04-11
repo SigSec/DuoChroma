@@ -105,6 +105,12 @@ public class PlayerMovement : MonoBehaviour {
 		{
 			_rb2d.velocity = new Vector2(0 - maxSpeed, _rb2d.velocity.y);
 		}
+
+		// Lock player to a pixel perfect grid.
+		if (_rb2d.velocity.x == 0)
+		{
+			transform.position = new Vector3(Mathf.Round(transform.position.x * 100) / 100, transform.position.y, transform.position.z);
+		}
 	}
 
 	// Checks for collisions

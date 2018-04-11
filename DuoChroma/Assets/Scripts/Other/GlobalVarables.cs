@@ -39,6 +39,10 @@ public class GlobalVarables : MonoBehaviour
 
 	private void Awake()
 	{
+		// Always keep the cursor hidden.
+		Cursor.visible = false;
+		Cursor.lockState = CursorLockMode.Locked;
+
 		// Check if the prefrences exit, otherwise write them.
 		if (!PlayerPrefs.HasKey("pixelSize")) {pixelSize = 2; }
 		else { pixelSize = PlayerPrefs.GetInt("pixelSize");}
