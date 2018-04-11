@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Map
+  - Gem
+  - Key
+  - Door
+  - MultiGem
   layers:
   - Default
   - TransparentFX

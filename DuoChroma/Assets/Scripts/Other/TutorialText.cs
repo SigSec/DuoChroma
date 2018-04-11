@@ -19,11 +19,11 @@ public class TutorialText : MonoBehaviour {
 
 	private void LateUpdate()
 	{
-		//                            r            g            b           a       hex values
+		//                                r            g            b           a    hex values
 		Color darkRed =		new Color(138f / 255f, 028f / 255f, 053f/ 255f, 1f); // #8a1c35
-		Color lightRed =	new Color(209f / 255f, 059f / 255f, 059f/ 255f, 1f); // #d13b3b
+		//    lightRed                                                              #d13b3b
 		Color darkGreen =	new Color(007f / 255f, 049f / 255f, 054f/ 255f, 1f); // #073136
-		Color lightGreen =	new Color(021f / 255f, 087f / 255f, 072f/ 255f, 1f); // #155748
+		//    lightGreen                                                            #155748
 
 		arrayOfText[0].color = darkRed;
 		arrayOfText[0].text = "Press <color=#d13b3b>" + _global.left + "</color> or <color=#d13b3b>" + _global.leftAlt + "</color> to walk left";

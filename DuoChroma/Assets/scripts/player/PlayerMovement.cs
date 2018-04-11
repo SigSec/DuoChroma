@@ -116,4 +116,13 @@ public class PlayerMovement : MonoBehaviour {
 			hasJumped = _hasFallen = false;
 		}
 	}
+
+	private void OnTriggerEnter2D(Collider2D collision)
+	{
+		if (collision.gameObject.tag == "Gem")
+		{
+			gameObject.GetComponent<PlayerHealth>().Heal(collision.gameObject.GetComponent<Pickup>()._isRed, 10);
+			Destroy(collision.gameObject);
+		}
+	}
 }
