@@ -7,9 +7,6 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
 	// Variables.
-	private Animator _anim;
-	private GlobalVarables _global;
-
 	[HideInInspector] public bool hasJumped = true;
 
 	public float speed = 10.0f;
@@ -19,6 +16,9 @@ public class PlayerMovement : MonoBehaviour {
 	public float maxJump = 500.0f;
 
 	private Rigidbody2D _rb2d;
+	private Animator _anim;
+	private GlobalVarables _global;
+	private MenuNavigator _menu;
 
 	private bool _hasFallen = false;
 	private bool _isRed;
@@ -28,6 +28,7 @@ public class PlayerMovement : MonoBehaviour {
 		_global = GameObject.Find("Persistent").GetComponent<GlobalVarables>();
 		_anim = GetComponent<Animator>();
 		_rb2d = GetComponent<Rigidbody2D>();
+		_menu = GameObject.Find("EventSystem").GetComponent<MenuNavigator>();
 	}
 
 	private void FixedUpdate()
@@ -35,13 +36,31 @@ public class PlayerMovement : MonoBehaviour {
 		// Update the isRed variable.
 		_isRed = GetComponent<GravityManager>().isRed;
 		_anim.SetBool("isRed", _isRed);
+		_anim.SetBool("isFalling", _hasFallen);
 
 		// Get input.
-		float _horizontalInput = Input.GetAxisRaw("Horizontal");
-		float _verticalInput = Input.GetAxisRaw("Vertical");
+		float _horizontalInput;
+		float _verticalInput;
+
+		// horizontal
+		if (Input.GetKey(_global.left) || Input.GetKey(_global.leftAlt)) { _horizontalInput = -1f; }
+		else if (Input.GetKey(_global.right) || Input.GetKey(_global.rightAlt)) { _horizontalInput = 1f; }
+		else { _horizontalInput = 0; }
+
+		print(_horizontalInput);
+
+		// vertical
+		if (Input.GetKey(_global.down) || Input.GetKey(_global.downAlt)) { _verticalInput = -1f; }
+		else if (Input.GetKey(_global.up) || Input.GetKey(_global.upAlt)) { _verticalInput = 1f; }
+		else { _verticalInput = 0; }
+
+		if (_menu.isPaused)
+		{
+			_horizontalInput = _verticalInput = 0;
+		}
 
 		// Check for restart
-		if (Input.GetKeyDown(KeyCode.R))
+		if (Input.GetKeyDown(_global.restart) && !_menu.isPaused)
 		{
 			UnityEngine.SceneManagement.SceneManager.LoadScene(_global.level);
 		}
@@ -77,7 +96,7 @@ public class PlayerMovement : MonoBehaviour {
 
 		// Move player horizontally
 		_rb2d.AddForce(Vector2.right * _horizontalInput * speed);
-		_anim.SetFloat("hSpeed", 0.6f + (_rb2d.velocity.x / 2));
+		_anim.SetFloat("hSpeed", 0.8f + (_rb2d.velocity.x / 2));
 
 		// Checks if the player hasn't gone over the max horizontal velocity.
 		if (_rb2d.velocity.x > maxSpeed)

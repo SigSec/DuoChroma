@@ -13,6 +13,7 @@ public class MenuNavigator : MonoBehaviour {
 	// Variables
 	public Canvas[] arrayOfMenus;
 	public UnityEngine.UI.Text[] arrayOfSettings;
+	public UnityEngine.UI.Text[] arrayOfKeys;
 
 	public bool isPaused;
 
@@ -20,14 +21,19 @@ public class MenuNavigator : MonoBehaviour {
 	private GravityManager _gManager;
 	private List<GameObject> arrayOfOptions = new List<GameObject>();
 
+	private KeyCode lastKey;
+
+	private Color _inactiveTextColour;
+	private Color _activeTextColour;
+
 	private int _menuIndex = 0;
 	private int _optionIndex = 2;
+	private int _keyToChange = 0;
 
 	private float _inputWaitTime = 0.2f;
 	private float _currentInputWait;
 
-	private Color _inactiveTextColour;
-	private Color _activeTextColour;
+	private bool _waitingForInput = false;
 
 	// Custom functions.
 
@@ -54,6 +60,7 @@ public class MenuNavigator : MonoBehaviour {
 
 	private void Update()
 	{
+
 		if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex != 0)
 		{
 			if (_gManager.isRed)
@@ -137,6 +144,12 @@ public class MenuNavigator : MonoBehaviour {
 						_optionIndex = 2;
 						UpdateArrayOfOptions();
 					}
+
+					else if (crntOptn == "Back")
+					{
+						isPaused = false;
+					}
+
 					else if (crntOptn == "Quit")
 					{
 						if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex != 0)
@@ -154,16 +167,17 @@ public class MenuNavigator : MonoBehaviour {
 					{
 						_menuIndex = 2;
 					}
-					/* Need to add an option to remap, and reset controls.
+
 					else if (crntOptn == "Controls")
 					{
 						_menuIndex = 3;
 					}
-					*/
+
 					else if (crntOptn == "Audio")
 					{
-						_menuIndex = 3;
+						_menuIndex = 4;
 					}
+
 					else if (crntOptn == "Back")
 					{
 						_menuIndex = 0;
@@ -174,6 +188,84 @@ public class MenuNavigator : MonoBehaviour {
 				}
 				else if (crntMenu == "Graphics" || crntMenu == "Audio")
 				{
+					if (crntOptn == "Back")
+					{
+						arrayOfMenus[_menuIndex].gameObject.SetActive(false);
+						_menuIndex = 1;
+						_optionIndex = 2;
+						UpdateArrayOfOptions();
+					}
+				}
+
+				// Remaping controls
+				else if (crntMenu == "Controls")
+				{
+					if (crntOptn == "left")
+					{
+						_keyToChange = 0;
+						_waitingForInput = true;
+					}
+
+					else if (crntOptn == "leftAlt")
+					{
+						_keyToChange = 1;
+						_waitingForInput = true;
+					}
+
+					else if (crntOptn == "right")
+					{
+						_keyToChange = 2;
+						_waitingForInput = true;
+					}
+
+					else if (crntOptn == "rightAlt")
+					{
+						_keyToChange = 3;
+						_waitingForInput = true;
+					}
+
+					else if (crntOptn == "up")
+					{
+						_keyToChange = 4;
+						_waitingForInput = true;
+					}
+
+					else if (crntOptn == "upAlt")
+					{
+						_keyToChange = 5;
+						_waitingForInput = true;
+					}
+
+					else if (crntOptn == "down")
+					{
+						_keyToChange = 6;
+						_waitingForInput = true;
+					}
+
+					else if (crntOptn == "downAlt")
+					{
+						_keyToChange = 7;
+						_waitingForInput = true;
+					}
+
+					else if (crntOptn == "restart")
+					{
+						_keyToChange = 8;
+						_waitingForInput = true;
+					}
+
+					else if (crntOptn == "menu")
+					{
+						_keyToChange = 9;
+						_waitingForInput = true;
+					}
+
+					else if (crntOptn == "quit")
+					{
+						_keyToChange = 10;
+						_waitingForInput = true;
+					}
+
 					if (crntOptn == "Back")
 					{
 						arrayOfMenus[_menuIndex].gameObject.SetActive(false);
@@ -269,6 +361,19 @@ public class MenuNavigator : MonoBehaviour {
 			arrayOfSettings[2].text = "Music Volume: " + _global.musicVolume;
 			arrayOfSettings[3].text = "SFX Volume: " + _global.sfxVolume;
 
+			// Updating keys.
+			arrayOfKeys[0].text = "Left: "		+ _global.left.ToString();
+			arrayOfKeys[1].text = "/ "			+ _global.leftAlt.ToString();
+			arrayOfKeys[2].text = "Right: "		+ _global.right.ToString();
+			arrayOfKeys[3].text = "/ "			+ _global.rightAlt.ToString();
+			arrayOfKeys[4].text = "Up: "		+ _global.up.ToString();
+			arrayOfKeys[5].text = "/ "			+ _global.upAlt.ToString();
+			arrayOfKeys[6].text = "Down: "		+ _global.down.ToString();
+			arrayOfKeys[7].text = "/ "			+ _global.downAlt.ToString();
+			arrayOfKeys[8].text = "Restart: "	+ _global.restart.ToString();
+			arrayOfKeys[9].text = "Menu: "		+ _global.menu.ToString();
+			arrayOfKeys[10].text = "Quit: "		+ _global.quit.ToString();
+
 			// Update timer.
 			_currentInputWait += Time.deltaTime;
 		}
@@ -277,6 +382,71 @@ public class MenuNavigator : MonoBehaviour {
 			arrayOfMenus[_menuIndex].gameObject.SetActive(false);
 			_menuIndex = 0;
 			_optionIndex = 2;
+		}
+	}
+
+	private void OnGUI()
+	{
+		Event e = Event.current;
+		if (e.isKey && e.keyCode != KeyCode.Return && e.keyCode != KeyCode.None && _waitingForInput)
+		{
+			if (_keyToChange == 0)
+			{
+				_global.left = e.keyCode;
+			}
+
+			else if (_keyToChange == 1)
+			{
+				_global.leftAlt = e.keyCode;
+			}
+
+			else if (_keyToChange == 2)
+			{
+				_global.right = e.keyCode;
+			}
+
+			else if (_keyToChange == 3)
+			{
+				_global.rightAlt = e.keyCode;
+			}
+
+			else if (_keyToChange == 4)
+			{
+				_global.up = e.keyCode;
+			}
+
+			else if (_keyToChange == 5)
+			{
+				_global.upAlt = e.keyCode;
+			}
+
+			else if (_keyToChange == 6)
+			{
+				_global.down = e.keyCode;
+			}
+
+			else if (_keyToChange == 7)
+			{
+				_global.downAlt = e.keyCode;
+			}
+
+			else if (_keyToChange == 8)
+			{
+				_global.restart = e.keyCode;
+			}
+
+			else if (_keyToChange == 9)
+			{
+				_global.menu = e.keyCode;
+			}
+
+			else if (_keyToChange == 10)
+			{
+				_global.quit = e.keyCode;
+			}
+
+			_global.UpdatePrefs();
+			_waitingForInput = false;
 		}
 	}
 }

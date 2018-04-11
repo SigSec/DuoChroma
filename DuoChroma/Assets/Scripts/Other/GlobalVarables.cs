@@ -5,6 +5,7 @@ Version:	0.2.0
 Date:		10/04/2018 19:12
 */
 
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GlobalVarables : MonoBehaviour
@@ -21,6 +22,8 @@ public class GlobalVarables : MonoBehaviour
 	[HideInInspector] public int level = 1;
 
 	// Key inputs.
+	[HideInInspector] public List<KeyCode> keys = new List<KeyCode>();
+
 	[HideInInspector] public KeyCode left;
 	[HideInInspector] public KeyCode leftAlt;
 	[HideInInspector] public KeyCode right;
@@ -89,7 +92,20 @@ public class GlobalVarables : MonoBehaviour
 		else { enter = (KeyCode)PlayerPrefs.GetInt("enter"); }
 
 		UpdatePrefs();
-		
+
+		// Update keys so that they can be remapped.
+		keys.Add(left);
+		keys.Add(leftAlt);
+		keys.Add(right);
+		keys.Add(rightAlt);
+		keys.Add(up);
+		keys.Add(upAlt);
+		keys.Add(down);
+		keys.Add(downAlt);
+		keys.Add(restart);
+		keys.Add(menu);
+		keys.Add(quit);
+
 		// Singleton class.
 		if (self == null)
 		{
@@ -122,7 +138,6 @@ public class GlobalVarables : MonoBehaviour
 		PlayerPrefs.SetInt("menu", (int)menu);
 		PlayerPrefs.SetInt("quit", (int)quit);
 		PlayerPrefs.SetInt("enter", (int)enter);
-		PlayerPrefs.SetInt("leftAlt", (int)leftAlt);
 
 		PlayerPrefs.Save();
 	}

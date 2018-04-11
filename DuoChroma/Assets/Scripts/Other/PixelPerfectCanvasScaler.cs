@@ -23,6 +23,5 @@ public class PixelPerfectCanvasScaler : MonoBehaviour
 	private void LateUpdate()
 	{
 		_canvas.scaleFactor = _global.pixelSize * _global.uiScale;
-		print(_canvas.scaleFactor);
 	}
 }
