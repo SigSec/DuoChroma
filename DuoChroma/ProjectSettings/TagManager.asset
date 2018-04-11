@@ -4,8 +4,7 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - tile
-  - textPrompt
+  - Map
   layers:
   - Default
   - TransparentFX

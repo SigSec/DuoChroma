@@ -1,107 +1,102 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿// DuoChroma Player Movement script by Justinas Grigas
+// Copyright (c) Sigma Games
+// https://sigsec.github.io
+// This script manages the movement of the player.
+
 using UnityEngine;
-using System;
 
 public class PlayerMovement : MonoBehaviour {
-    // Set up variables.
-    public KeyCode escapeKey = KeyCode.Escape;
+	// Variables.
+	private Animator _anim;
+	private GlobalVarables _global;
 
-    public float xVelocityCap = 8.0f;
-    public float yVelocityCap = 10.0f;
+	[HideInInspector] public bool hasJumped = true;
 
-    public float gravityScale = 0.7f;
-    public float runningSpeed = 7.0f;
-    public float jumpForce = 300.0f;
+	public float speed = 10.0f;
+	public float jumpHeight = 20.0f;
 
-    private Transform _playerTransform;
-    private Rigidbody2D _playerRigidbody;
+	public float maxSpeed = 1.5f;
+	public float maxJump = 500.0f;
 
-    private float _horizontalInput;
-    private float _verticalInput;
+	private Rigidbody2D _rb2d;
 
-    private bool _hasJumped = true;
-    private bool _hasStomped = true;
-	
-    private void Awake()
-    {
-        _playerTransform = GetComponent<Transform>();
-        _playerRigidbody = GetComponent<Rigidbody2D>();
-    }
+	private bool _hasFallen = false;
+	private bool _isRed;
 
-	private void Update () {
-        // Get user input.
-        _horizontalInput = Input.GetAxisRaw("Horizontal");
-        _verticalInput = Input.GetAxisRaw("Vertical");
+	private void Awake()
+	{
+		_global = GameObject.Find("Persistent").GetComponent<GlobalVarables>();
+		_anim = GetComponent<Animator>();
+		_rb2d = GetComponent<Rigidbody2D>();
+	}
 
-        if (Input.GetKeyDown(escapeKey))
-        {
-            Application.Quit();
-        }
+	private void FixedUpdate()
+	{
+		// Update the isRed variable.
+		_isRed = GetComponent<GravityManager>().isRed;
+		_anim.SetBool("isRed", _isRed);
 
-        // Checks which side the user is on.
-        if (_playerTransform.position.y > 0)
-        {
-            _playerRigidbody.gravityScale = gravityScale;
-        }
-        else
-        {
-            // Inverts vertical input.
-            _verticalInput *= -1;
-            _playerRigidbody.gravityScale = -1 * gravityScale;
-        }
+		// Get input.
+		float _horizontalInput = Input.GetAxisRaw("Horizontal");
+		float _verticalInput = Input.GetAxisRaw("Vertical");
 
-        // Checks if the user has pressed up, has not jumped, and his y velocity is zero.
-        if (_verticalInput == 1 && !_hasJumped && _playerRigidbody.velocity.y == 0)
-        {
-            _hasJumped = true;
-            _playerRigidbody.velocity = new Vector2(_playerRigidbody.velocity.x, 0.0f);
-        }
-        else if (_verticalInput == -1 && !_hasStomped)
-        {
-            _hasStomped = true;
-            _playerRigidbody.velocity = new Vector2(_playerRigidbody.velocity.x, 0.0f);
-        }
-        // Resets the vertical input.
-        else
-        {
-            _verticalInput = 0;
-        }
-    }
+		// Check for restart
+		if (Input.GetKeyDown(KeyCode.R))
+		{
+			UnityEngine.SceneManagement.SceneManager.LoadScene(_global.level);
+		}
 
-    private void FixedUpdate()
-    {
-        // Process input.
-        // Checks if the velocity of the player has gone over the maximi
-        if (_playerRigidbody.velocity.x > xVelocityCap)
-        {
-            _playerRigidbody.velocity = new Vector2(xVelocityCap, _playerRigidbody.velocity.y);
-        } else if (_playerRigidbody.velocity.x < 0 - xVelocityCap)
-        {
-            _playerRigidbody.velocity = new Vector2(0 - xVelocityCap, _playerRigidbody.velocity.y);
-        }
-        // Does the same for the y velocity.
-        if (_playerRigidbody.velocity.y > yVelocityCap)
-        {
-            _playerRigidbody.velocity = new Vector2(_playerRigidbody.velocity.x, yVelocityCap);
-        }
-        else if (_playerRigidbody.velocity.y < 0 - yVelocityCap)
-        {
-            _playerRigidbody.velocity = new Vector2(_playerRigidbody.velocity.x, 0 - yVelocityCap);
-        }
-        _playerRigidbody.AddForce(new Vector2(_horizontalInput * runningSpeed, _verticalInput * jumpForce));
-    }
+		// Update the rotation of the charater.
+		if (_horizontalInput < 0) { transform.localScale = new Vector3(-1, transform.localScale.y, transform.localScale.z); }
+		else if (_horizontalInput > 0) { transform.localScale = new Vector3(1, transform.localScale.y, transform.localScale.z); }
 
-    private void OnCollisionStay2D(Collision2D collision2D)
-    {
-        try
-        {
-            if (collision2D.collider.sharedMaterial.name == "tile")
-            {
-                _hasJumped = _hasStomped = false;
-            }
-        }
-        catch(NullReferenceException e)
-        { print(e); }
-    }
+		// Checks if the player can jump, based on a criteria.
+		if (!hasJumped && !_hasFallen && _rb2d.velocity.y == 0.0f && ((_isRed  && _verticalInput > 0.0f ) || (!_isRed && _verticalInput < 0.0f)))
+		{
+			hasJumped = true;
+			_anim.SetTrigger("Jump");
+			_rb2d.velocity = new Vector2(_rb2d.velocity.x, 0.0f);
+			_rb2d.AddForce(Vector2.up * _verticalInput * jumpHeight);
+		}
+
+		// Checks if the player is moving
+		if (_rb2d.velocity.x != 0.0f && _rb2d.velocity.y == 0.0f)
+		{
+			_anim.SetBool("isWalking", true);
+		}
+		else
+		{
+			_anim.SetBool("isWalking", false);
+		}
+		
+		// Checks if the player has fallen.
+		if (hasJumped && ((_isRed && _rb2d.velocity.y < 0) || (!_isRed && _rb2d.velocity.y > 0)))
+		{
+			_hasFallen = true;
+		}
+
+		// Move player horizontally
+		_rb2d.AddForce(Vector2.right * _horizontalInput * speed);
+		_anim.SetFloat("hSpeed", 0.6f + (_rb2d.velocity.x / 2));
+
+		// Checks if the player hasn't gone over the max horizontal velocity.
+		if (_rb2d.velocity.x > maxSpeed)
+		{
+			_rb2d.velocity = new Vector2(maxSpeed, _rb2d.velocity.y);
+		}
+		else if (_rb2d.velocity.x < 0 - maxSpeed)
+		{
+			_rb2d.velocity = new Vector2(0 - maxSpeed, _rb2d.velocity.y);
+		}
+	}
+
+	// Checks for collisions
+	private void OnCollisionStay2D(Collision2D collision)
+	{
+		// Checks if the player touches the floor
+		if (collision.gameObject.tag == "Map" && _hasFallen)
+		{
+			hasJumped = _hasFallen = false;
+		}
+	}
 }
