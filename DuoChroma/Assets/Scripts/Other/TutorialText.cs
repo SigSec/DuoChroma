@@ -48,5 +48,8 @@ public class TutorialText : MonoBehaviour {
 
 		arrayOfText[7].color = darkGreen;
 		arrayOfText[7].text = "You can remap your controls in the <color=#155748> Options </color> menu";
+
+		arrayOfText[8].color = darkRed;
+		arrayOfText[8].text = "...One side is getting darker, while the other brighter, for there must be <color=#d13b3b> balance </color>";
 	}
 }
