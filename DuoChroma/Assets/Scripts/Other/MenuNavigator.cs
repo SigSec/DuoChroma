@@ -374,6 +374,11 @@ public class MenuNavigator : MonoBehaviour {
 			arrayOfMenus[_menuIndex].gameObject.SetActive(false);
 			_menuIndex = 0;
 			_optionIndex = 2;
+
+			if (Input.GetKeyDown(_global.quit) && UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex != 0)
+			{
+				UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+			}
 		}
 	}
 
