@@ -30,9 +30,6 @@ public class MenuNavigator : MonoBehaviour {
 	private int _optionIndex = 2;
 	private int _keyToChange = 0;
 
-	private float _inputWaitTime = 0.2f;
-	private float _currentInputWait;
-
 	private bool _waitingForInput = false;
 
 	// Custom functions.
@@ -53,9 +50,6 @@ public class MenuNavigator : MonoBehaviour {
 		if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex != 0)
 		{ _gManager = GameObject.Find("Player").GetComponent<GravityManager>(); }
 		_global = GameObject.Find("Persistent").GetComponent<GlobalVarables>();
-
-		// Makes it so that you don't have to wait for the input pause at the start of the game.
-		_currentInputWait = _inputWaitTime;
 	}
 
 	private void Update()
@@ -92,22 +86,30 @@ public class MenuNavigator : MonoBehaviour {
 
 		if (isPaused)
 		{
+			Time.timeScale = 0;
 			UpdateArrayOfOptions();
 
 			// Get input.
-			float _horizontalInput = Input.GetAxisRaw("Horizontal");
-			float _verticalInput = Input.GetAxisRaw("Vertical");
+			float _horizontalInput;
+			float _verticalInput;
+			// horizontal
+			if (Input.GetKeyDown(_global.left) || Input.GetKeyDown(_global.leftAlt)) { _horizontalInput = -1f; }
+			else if (Input.GetKeyDown(_global.right) || Input.GetKeyDown(_global.rightAlt)) { _horizontalInput = 1f; }
+			else { _horizontalInput = 0; }
+
+			// vertical
+			if (Input.GetKeyDown(_global.down) || Input.GetKeyDown(_global.downAlt)) { _verticalInput = -1f; }
+			else if (Input.GetKeyDown(_global.up) || Input.GetKeyDown(_global.upAlt)) { _verticalInput = 1f; }
+			else { _verticalInput = 0; }
 
 			// Manage vertical input.
-			if (_verticalInput > 0 && _currentInputWait >= _inputWaitTime)
+			if (_verticalInput > 0)
 			{
 				_optionIndex--;
-				_currentInputWait = 0;
 			}
-			else if (_verticalInput < 0 && _currentInputWait >= _inputWaitTime)
+			else if (_verticalInput < 0)
 			{
 				_optionIndex++;
-				_currentInputWait = 0;
 			}
 
 			// Manage option navigation
@@ -123,7 +125,7 @@ public class MenuNavigator : MonoBehaviour {
 			string crntOptn = arrayOfOptions[_optionIndex].gameObject.name;
 			string crntMenu = arrayOfMenus[_menuIndex].name;
 			// Navigating the menus.
-			if (Input.GetKeyDown(KeyCode.Return))
+			if (Input.GetKeyDown(_global.enter))
 			{
 				if (crntMenu == "Main Menu")
 				{
@@ -280,33 +282,29 @@ public class MenuNavigator : MonoBehaviour {
 			{
 				if (crntOptn == "Pixel Size")
 				{
-					if (_horizontalInput > 0 && _currentInputWait >= _inputWaitTime && _global.pixelSize < 3)
+					if (_horizontalInput > 0  && _global.pixelSize < 3)
 					{
 						_global.pixelSize++;
 						_global.UpdatePrefs();
-						_currentInputWait = 0;
 					}
-					else if (_horizontalInput < 0 && _currentInputWait >= _inputWaitTime && _global.pixelSize > 1)
+					else if (_horizontalInput < 0 && _global.pixelSize > 1)
 					{
 						_global.pixelSize--;
 						_global.UpdatePrefs();
-						_currentInputWait = 0;
 					}
 				}
 
 				else if (crntOptn == "UI Scale")
 				{
-					if (_horizontalInput > 0 && _currentInputWait >= _inputWaitTime && _global.uiScale < 2)
+					if (_horizontalInput > 0  && _global.uiScale < 2)
 					{
 						_global.uiScale++;
 						_global.UpdatePrefs();
-						_currentInputWait = 0;
 					}
-					else if (_horizontalInput < 0 && _currentInputWait >= _inputWaitTime && _global.uiScale > 1)
+					else if (_horizontalInput < 0  && _global.uiScale > 1)
 					{
 						_global.uiScale--;
 						_global.UpdatePrefs();
-						_currentInputWait = 0;
 					}
 				}
 			}
@@ -314,33 +312,29 @@ public class MenuNavigator : MonoBehaviour {
 			{
 				if (crntOptn == "Music Volume")
 				{
-					if (_horizontalInput > 0 && _currentInputWait >= _inputWaitTime && _global.musicVolume < 10)
+					if (_horizontalInput > 0  && _global.musicVolume < 10)
 					{
 						_global.musicVolume++;
 						_global.UpdatePrefs();
-						_currentInputWait = 0;
 					}
-					else if (_horizontalInput < 0 && _currentInputWait >= _inputWaitTime && _global.musicVolume > 0)
+					else if (_horizontalInput < 0  && _global.musicVolume > 0)
 					{
 						_global.musicVolume--;
 						_global.UpdatePrefs();
-						_currentInputWait = 0;
 					}
 				}
 
 				else if (crntOptn == "SFX Volume")
 				{
-					if (_horizontalInput > 0 && _currentInputWait >= _inputWaitTime && _global.sfxVolume < 10)
+					if (_horizontalInput > 0 && _global.sfxVolume < 10)
 					{
 						_global.sfxVolume++;
 						_global.UpdatePrefs();
-						_currentInputWait = 0;
 					}
-					else if (_horizontalInput < 0 && _currentInputWait >= _inputWaitTime && _global.sfxVolume > 0)
+					else if (_horizontalInput < 0  && _global.sfxVolume > 0)
 					{
 						_global.sfxVolume--;
 						_global.UpdatePrefs();
-						_currentInputWait = 0;
 					}
 				}
 			}
@@ -373,12 +367,10 @@ public class MenuNavigator : MonoBehaviour {
 			arrayOfKeys[8].text = "Restart: "	+ _global.restart.ToString();
 			arrayOfKeys[9].text = "Menu: "		+ _global.menu.ToString();
 			arrayOfKeys[10].text = "Quit: "		+ _global.quit.ToString();
-
-			// Update timer.
-			_currentInputWait += Time.deltaTime;
 		}
 		else
 		{
+			Time.timeScale = 1;
 			arrayOfMenus[_menuIndex].gameObject.SetActive(false);
 			_menuIndex = 0;
 			_optionIndex = 2;

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEditor;
 
 internal sealed class ScriptTemplate : UnityEditor.AssetModificationProcessor
 {
@@ -49,8 +48,5 @@ internal sealed class ScriptTemplate : UnityEditor.AssetModificationProcessor
 
 		// We read the script into a string, changed our keywords, now we write the modified version back into the script file
 		System.IO.File.WriteAllText(path, file);
-
-		// Refresh the unity asset database to trigger a compilation of our changes on the script
-		AssetDatabase.Refresh();
 	}
 }

@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour {
 	private GlobalVarables _global;
 	private MenuNavigator _menu;
 
-	private bool _hasFallen = false;
+	private bool _hasFallen = true;
 	private bool _isRed;
 
 	private void Awake()
@@ -46,8 +46,6 @@ public class PlayerMovement : MonoBehaviour {
 		if (Input.GetKey(_global.left) || Input.GetKey(_global.leftAlt)) { _horizontalInput = -1f; }
 		else if (Input.GetKey(_global.right) || Input.GetKey(_global.rightAlt)) { _horizontalInput = 1f; }
 		else { _horizontalInput = 0; }
-
-		print(_horizontalInput);
 
 		// vertical
 		if (Input.GetKey(_global.down) || Input.GetKey(_global.downAlt)) { _verticalInput = -1f; }
@@ -113,7 +111,7 @@ public class PlayerMovement : MonoBehaviour {
 	private void OnCollisionStay2D(Collision2D collision)
 	{
 		// Checks if the player touches the floor
-		if (collision.gameObject.tag == "Map" && _hasFallen)
+		if (collision.gameObject.tag == "Map" && _hasFallen && _rb2d.velocity.y == 0.0f)
 		{
 			hasJumped = _hasFallen = false;
 		}
