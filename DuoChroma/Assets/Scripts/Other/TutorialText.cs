@@ -50,5 +50,7 @@ public class TutorialText : MonoBehaviour {
 		arrayOfText[8].text = "...One side is getting darker, while the other brighter, for there must be <color=" + arrayOfActiveColours[8] + ">balance</color>";
 		arrayOfText[9].text = "...Gems <color=" + arrayOfActiveColours[9] + ">brighten</color> up the side you are on";
 		arrayOfText[10].text = "<color=" + arrayOfActiveColours[10] + ">Keys</color> open doors on either side";
+		arrayOfText[11].text = "<color=" + arrayOfActiveColours[11] + ">Doors</color> can be opened as long as you have at least one <color=" + arrayOfActiveColours[11] + ">Key</color>";
+		arrayOfText[12].text = "...<color=" + arrayOfActiveColours[12] + ">Duo Gems</color> mark the end of the level. Find all of them to restore the <color=" + arrayOfActiveColours[12] + ">Balance</color>...";
 	}
 }

@@ -8,7 +8,7 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour {
 	// Variables.
 	[HideInInspector] public bool hasJumped = true;
-
+	[Header("Movement")]
 	public float speed = 10.0f;
 	public float jumpHeight = 20.0f;
 
@@ -22,6 +22,8 @@ public class PlayerMovement : MonoBehaviour {
 
 	private bool _hasFallen = true;
 	private bool _isRed;
+
+	private float _keyCount = 0;
 
 	private void Awake()
 	{
@@ -94,7 +96,7 @@ public class PlayerMovement : MonoBehaviour {
 
 		// Move player horizontally
 		_rb2d.AddForce(Vector2.right * _horizontalInput * speed);
-		_anim.SetFloat("hSpeed", 0.8f + (_rb2d.velocity.x / 2));
+		_anim.SetFloat("hSpeed", 0.8f + (Mathf.Abs(_rb2d.velocity.x) / 2));
 
 		// Checks if the player hasn't gone over the max horizontal velocity.
 		if (_rb2d.velocity.x > maxSpeed)
@@ -129,6 +131,23 @@ public class PlayerMovement : MonoBehaviour {
 		{
 			gameObject.GetComponent<PlayerHealth>().Heal(collision.gameObject.GetComponent<Pickup>()._isRed, 10);
 			Destroy(collision.gameObject);
+		}
+
+		else if (collision.gameObject.tag == "Key")
+		{
+			_keyCount++;
+			Destroy(collision.gameObject);
+		}
+
+		else if (collision.gameObject.tag == "Door" && _keyCount > 0)
+		{
+			_keyCount--;
+			collision.gameObject.GetComponent<Pickup>()._isOpen = true;
+		}
+
+		else if (collision.gameObject.tag == "MultiGem")
+		{
+			collision.gameObject.GetComponent<Pickup>()._loadNextScene = true;
 		}
 	}
 }
