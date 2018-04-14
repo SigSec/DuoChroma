@@ -19,7 +19,6 @@ public class MenuNavigator : MonoBehaviour {
 	public bool isPaused;
 
 	private GlobalVarables _global;
-	private GravityManager _gManager;
 	private List<GameObject> arrayOfOptions = new List<GameObject>();
 
 	private KeyCode lastKey;
@@ -48,32 +47,13 @@ public class MenuNavigator : MonoBehaviour {
 	// MonoBehaviour functions.
 	private void Awake()
 	{
-		if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex != 0)
-		{ _gManager = GameObject.Find("Player").GetComponent<GravityManager>(); }
 		_global = GameObject.Find("Persistent").GetComponent<GlobalVarables>();
 	}
 
 	private void Update()
 	{
-
-		if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex != 0)
-		{
-			if (_gManager.isRed)
-			{
-				_inactiveTextColour = new Color(138f / 255f, 28f / 255f, 53f / 255f, 1f);
-				_activeTextColour = new Color(209f / 255f, 59f / 255f, 59f / 255f, 1f);
-			}
-			else
-			{
-				_inactiveTextColour = new Color(7f / 255f, 49f / 255f, 54f / 255f, 1f);
-				_activeTextColour = new Color(21f / 255f, 87f / 255f, 72f / 255f, 1f);
-			}
-		}
-		else
-		{
-			_inactiveTextColour = new Color(138f / 255f, 28f / 255f, 53f / 255f, 1f);
-			_activeTextColour = new Color(209f / 255f, 59f / 255f, 59f / 255f, 1f);
-		}
+		_inactiveTextColour = new Color(138f / 255f, 28f / 255f, 53f / 255f, 1f);
+		_activeTextColour = new Color(209f / 255f, 59f / 255f, 59f / 255f, 1f);
 
 		foreach (var menu in arrayOfMenus)
 		{
@@ -91,24 +71,23 @@ public class MenuNavigator : MonoBehaviour {
 			UpdateArrayOfOptions();
 
 			// Get input.
-			float _horizontalInput;
-			float _verticalInput;
+			int horizontalInput = 0;
+			int verticalInput = 0;
+			
 			// horizontal
-			if (Input.GetKeyDown(_global.left) || Input.GetKeyDown(_global.leftAlt)) { _horizontalInput = -1f; }
-			else if (Input.GetKeyDown(_global.right) || Input.GetKeyDown(_global.rightAlt)) { _horizontalInput = 1f; }
-			else { _horizontalInput = 0; }
+			if (Input.GetKeyDown(_global.left) || Input.GetKeyDown(_global.leftAlt)) { horizontalInput = -1; }
+			else if (Input.GetKeyDown(_global.right) || Input.GetKeyDown(_global.rightAlt)) { horizontalInput = 1; }
 
 			// vertical
-			if (Input.GetKeyDown(_global.down) || Input.GetKeyDown(_global.downAlt)) { _verticalInput = -1f; }
-			else if (Input.GetKeyDown(_global.up) || Input.GetKeyDown(_global.upAlt)) { _verticalInput = 1f; }
-			else { _verticalInput = 0; }
+			if (Input.GetKeyDown(_global.down) || Input.GetKeyDown(_global.downAlt)) { verticalInput = -1; }
+			else if (Input.GetKeyDown(_global.up) || Input.GetKeyDown(_global.upAlt)) { verticalInput = 1; }
 
 			// Manage vertical input.
-			if (_verticalInput > 0)
+			if (verticalInput > 0)
 			{
 				_optionIndex--;
 			}
-			else if (_verticalInput < 0)
+			else if (verticalInput < 0)
 			{
 				_optionIndex++;
 			}
@@ -283,12 +262,12 @@ public class MenuNavigator : MonoBehaviour {
 			{
 				if (crntOptn == "Pixel Size")
 				{
-					if (_horizontalInput > 0  && _global.pixelSize < 3)
+					if (horizontalInput > 0  && _global.pixelSize < 3)
 					{
 						_global.pixelSize++;
 						_global.UpdatePrefs();
 					}
-					else if (_horizontalInput < 0 && _global.pixelSize > 1)
+					else if (horizontalInput < 0 && _global.pixelSize > 1)
 					{
 						_global.pixelSize--;
 						_global.UpdatePrefs();
@@ -297,12 +276,12 @@ public class MenuNavigator : MonoBehaviour {
 
 				else if (crntOptn == "UI Scale")
 				{
-					if (_horizontalInput > 0  && _global.uiScale < 2)
+					if (horizontalInput > 0  && _global.uiScale < 2)
 					{
 						_global.uiScale++;
 						_global.UpdatePrefs();
 					}
-					else if (_horizontalInput < 0  && _global.uiScale > 1)
+					else if (horizontalInput < 0  && _global.uiScale > 1)
 					{
 						_global.uiScale--;
 						_global.UpdatePrefs();
@@ -313,12 +292,12 @@ public class MenuNavigator : MonoBehaviour {
 			{
 				if (crntOptn == "Music Volume")
 				{
-					if (_horizontalInput > 0  && _global.musicVolume < 10)
+					if (horizontalInput > 0  && _global.musicVolume < 10)
 					{
 						_global.musicVolume++;
 						_global.UpdatePrefs();
 					}
-					else if (_horizontalInput < 0  && _global.musicVolume > 0)
+					else if (horizontalInput < 0  && _global.musicVolume > 0)
 					{
 						_global.musicVolume--;
 						_global.UpdatePrefs();
@@ -327,12 +306,12 @@ public class MenuNavigator : MonoBehaviour {
 
 				else if (crntOptn == "SFX Volume")
 				{
-					if (_horizontalInput > 0 && _global.sfxVolume < 10)
+					if (horizontalInput > 0 && _global.sfxVolume < 10)
 					{
 						_global.sfxVolume++;
 						_global.UpdatePrefs();
 					}
-					else if (_horizontalInput < 0  && _global.sfxVolume > 0)
+					else if (horizontalInput < 0  && _global.sfxVolume > 0)
 					{
 						_global.sfxVolume--;
 						_global.UpdatePrefs();

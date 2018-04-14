@@ -1,127 +1,159 @@
-﻿// DuoChroma Player Movement script by Justinas Grigas
-// Copyright (c) Sigma Games
-// https://sigsec.github.io
-// This script manages the movement of the player.
+﻿/*
+Project:	Duo Chroma
+Developer:	Justinas Grigas - https://mail.google.com/mail/u/0/?view=cm&fs=1&tf=1&to=jgrigas@elam.co.uk
+Version:	0.2.2
+Date:		12/04/2018 13:34
+*/
 
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
+
 	// Variables.
-	[HideInInspector] public bool hasJumped = true;
-	[Header("Movement")]
-	public float speed = 10.0f;
-	public float jumpHeight = 20.0f;
-
-	public float maxSpeed = 1.5f;
-	public float maxJump = 500.0f;
-
-	private Rigidbody2D _rb2d;
-	private Animator _anim;
-	private GlobalVarables _global;
-	private MenuNavigator _menu;
-
-	private bool _hasFallen = true;
+	private PlayerManager _playerManager;
+	private GlobalVarables _globalVariables;
+	private Animator _playerAnimator;
+	private Rigidbody2D _playerRigidbody2D;
+	
 	private bool _isRed;
+	private bool _isFalling = true;
+	private bool _hasJumped = true;
 
-	private float _keyCount = 0;
+	private float _horizontalSpeed;
+	private float _jumpHeight;
+	private float _maxXvelocity;
+	private float _maxYvelocity;
 
 	private void Awake()
 	{
-		_global = GameObject.Find("Persistent").GetComponent<GlobalVarables>();
-		_anim = GetComponent<Animator>();
-		_rb2d = GetComponent<Rigidbody2D>();
-		_menu = GameObject.Find("EventSystem").GetComponent<MenuNavigator>();
+		_globalVariables = GameObject.Find("Persistent").GetComponent<GlobalVarables>();
+		_playerManager = GetComponent<PlayerManager>();
+		_playerAnimator = GetComponent<Animator>();
+		_playerRigidbody2D = GetComponent<Rigidbody2D>();
+
+		_horizontalSpeed = _playerManager.horizontalSpeed;
+		_jumpHeight = _playerManager.jumpHeight;
+		_maxXvelocity = _playerManager.maxXvelocity;
+		_maxYvelocity = _playerManager.maxYvelocity;
 	}
 
 	private void FixedUpdate()
 	{
-		// Update the isRed variable.
-		_isRed = GetComponent<GravityManager>().isRed;
-		_anim.SetBool("isRed", _isRed);
-		_anim.SetBool("isFalling", _hasFallen);
+		float horizontalInput = 0;
+		float verticalInput = 0;
 
-		// Get input.
-		float _horizontalInput;
-		float _verticalInput;
-
-		// horizontal
-		if (Input.GetKey(_global.left) || Input.GetKey(_global.leftAlt)) { _horizontalInput = -1f; }
-		else if (Input.GetKey(_global.right) || Input.GetKey(_global.rightAlt)) { _horizontalInput = 1f; }
-		else { _horizontalInput = 0; }
-
-		// vertical
-		if (Input.GetKey(_global.down) || Input.GetKey(_global.downAlt)) { _verticalInput = -1f; }
-		else if (Input.GetKey(_global.up) || Input.GetKey(_global.upAlt)) { _verticalInput = 1f; }
-		else { _verticalInput = 0; }
-
-		if (_menu.isPaused)
+		// Get input from the player.
+		if (Input.GetKey(_globalVariables.left) || Input.GetKey(_globalVariables.leftAlt))
 		{
-			_horizontalInput = _verticalInput = 0;
+			horizontalInput = -1;
+		}
+		else if (Input.GetKey(_globalVariables.right) || Input.GetKey(_globalVariables.rightAlt))
+		{
+			horizontalInput = 1;
 		}
 
-		// Check for restart
-		if (Input.GetKeyDown(_global.restart) && !_menu.isPaused)
+		if (Input.GetKey(_globalVariables.up) || Input.GetKey(_globalVariables.upAlt))
 		{
-			UnityEngine.SceneManagement.SceneManager.LoadScene(_global.level);
+			verticalInput = 1;
+		}
+		else if (Input.GetKey(_globalVariables.down) || Input.GetKey(_globalVariables.downAlt))
+		{
+			verticalInput = -1;
 		}
 
-		// Update the rotation of the charater.
-		if (_horizontalInput < 0) { transform.localScale = new Vector3(-1, transform.localScale.y, transform.localScale.z); }
-		else if (_horizontalInput > 0) { transform.localScale = new Vector3(1, transform.localScale.y, transform.localScale.z); }
-
-		// Checks if the player can jump, based on a criteria.
-		if (!hasJumped && !_hasFallen && _rb2d.velocity.y == 0.0f && ((_isRed  && _verticalInput > 0.0f ) || (!_isRed && _verticalInput < 0.0f)))
+		// Check if the player can jump.
+		if (verticalInput != 0 && !_hasJumped)
 		{
-			hasJumped = true;
-			_anim.SetTrigger("Jump");
-			_rb2d.velocity = new Vector2(_rb2d.velocity.x, 0.0f);
-			_rb2d.AddForce(Vector2.up * _verticalInput * jumpHeight);
+			_playerAnimator.SetTrigger("Jump");
+			_hasJumped = true;
+			_playerRigidbody2D.AddForce(Vector2.up * verticalInput * _jumpHeight);
 		}
 
-		// Checks if the player is moving
-		if (_rb2d.velocity.x != 0.0f && _rb2d.velocity.y == 0.0f)
+		// Move the player horizontally.
+		if (horizontalInput != 0)
 		{
-			_anim.SetBool("isWalking", true);
+			_playerRigidbody2D.AddForce(Vector2.right * horizontalInput * _horizontalSpeed);
+			transform.localScale = new Vector3(horizontalInput, transform.localScale.y, 1);
+		}
+
+		// Check if the player is moving horizontally.
+		if (_playerRigidbody2D.velocity.x == 0 || _hasJumped)
+		{
+			if (!_hasJumped)
+			{
+				transform.position = new Vector3(Mathf.Round(transform.position.x * 100) / 100, transform.position.y, transform.position.z);
+			}
+			_playerAnimator.SetBool("isWalking", false);
 		}
 		else
 		{
-			_anim.SetBool("isWalking", false);
-		}
-		
-		// Checks if the player has fallen.
-		if (hasJumped && ((_isRed && _rb2d.velocity.y < 0) || (!_isRed && _rb2d.velocity.y > 0)))
-		{
-			_hasFallen = true;
+			_playerAnimator.SetBool("isWalking", true);
 		}
 
-		// Move player horizontally
-		_rb2d.AddForce(Vector2.right * _horizontalInput * speed);
-		_anim.SetFloat("hSpeed", 0.8f + (Mathf.Abs(_rb2d.velocity.x) / 2));
+		// Update the is red variable.
+		if (transform.position.y > 0)
+		{
+			_isRed = true;
+			transform.localScale = new Vector3(transform.localScale.x, 1, 1);
+			_playerRigidbody2D.gravityScale = 1;
 
-		// Checks if the player hasn't gone over the max horizontal velocity.
-		if (_rb2d.velocity.x > maxSpeed)
-		{
-			_rb2d.velocity = new Vector2(maxSpeed, _rb2d.velocity.y);
+			if (_hasJumped && _playerRigidbody2D.velocity.y <= 0 && !_isFalling)
+			{
+				_isFalling = true;
+			}
 		}
-		else if (_rb2d.velocity.x < 0 - maxSpeed)
+		else
 		{
-			_rb2d.velocity = new Vector2(0 - maxSpeed, _rb2d.velocity.y);
+			_isRed = false;
+			transform.localScale = new Vector3(transform.localScale.x, -1, 1);
+			_playerRigidbody2D.gravityScale = -1;
+
+			if (_hasJumped && _playerRigidbody2D.velocity.y >= 0 && !_isFalling)
+			{
+				_isFalling = true;
+			}
 		}
 
-		// Lock player to a pixel perfect grid.
-		if (_rb2d.velocity.x == 0)
+		// Limit the velocity of the player
+		if (_playerRigidbody2D.velocity.x > _maxXvelocity)
 		{
-			transform.position = new Vector3(Mathf.Round(transform.position.x * 100) / 100, transform.position.y, transform.position.z);
+			_playerRigidbody2D.velocity = new Vector2(_maxXvelocity, _playerRigidbody2D.velocity.y);
+		}
+		else if (_playerRigidbody2D.velocity.x < 0 -_maxXvelocity)
+		{
+			_playerRigidbody2D.velocity = new Vector2(0 - _maxXvelocity, _playerRigidbody2D.velocity.y);
+		}
+
+		if (_playerRigidbody2D.velocity.y > _maxYvelocity)
+		{
+			_playerRigidbody2D.velocity = new Vector2(_playerRigidbody2D.velocity.x, _maxYvelocity);
+		}
+		else if (_playerRigidbody2D.velocity.y < 0 - _maxYvelocity)
+		{
+			_playerRigidbody2D.velocity = new Vector2(_playerRigidbody2D.velocity.x, 0 - _maxYvelocity);
+		}
+
+		// Update animator variables.
+		_playerManager.isRed = _isRed;
+		_playerAnimator.SetBool("isFalling", _isFalling);
+		_playerAnimator.SetBool("isRed", _isRed);
+		_playerAnimator.SetFloat("hSpeed", Mathf.Abs(_playerRigidbody2D.velocity.x) / 2 + 0.6f);
+
+		// Restart Game.
+		if (Input.GetKeyDown(_globalVariables.restart))
+		{
+			_playerManager.Restart();
 		}
 	}
 
-	// Checks for collisions
+	// Checks for collisions.
 	private void OnCollisionStay2D(Collision2D collision)
 	{
-		// Checks if the player touches the floor
-		if (collision.gameObject.tag == "Map" && _hasFallen && _rb2d.velocity.y == 0.0f)
+		// Checks if the player touches the floor.
+		if (collision.gameObject.tag == "Map" && _isFalling && _playerRigidbody2D.velocity.y == 0)
 		{
-			hasJumped = _hasFallen = false;
+			_hasJumped = false;
+			_isFalling = false;
 		}
 	}
 
@@ -129,25 +161,22 @@ public class PlayerMovement : MonoBehaviour {
 	{
 		if (collision.gameObject.tag == "Gem")
 		{
-			gameObject.GetComponent<PlayerHealth>().Heal(collision.gameObject.GetComponent<Pickup>()._isRed, 10);
+			GetComponent<PlayerHealth>().isHealing = true;
 			Destroy(collision.gameObject);
 		}
-
 		else if (collision.gameObject.tag == "Key")
 		{
-			_keyCount++;
+			_playerManager.keyCount++;
 			Destroy(collision.gameObject);
 		}
-
-		else if (collision.gameObject.tag == "Door" && _keyCount > 0)
+		else if (collision.gameObject.tag == "Door" && _playerManager.keyCount > 0)
 		{
-			_keyCount--;
-			collision.gameObject.GetComponent<Pickup>()._isOpen = true;
+			_playerManager.keyCount--;
+			collision.gameObject.GetComponent<Door>().isOpening = true;
 		}
-
 		else if (collision.gameObject.tag == "MultiGem")
 		{
-			collision.gameObject.GetComponent<Pickup>()._loadNextScene = true;
+			_playerManager.loadNextScene = true;
 		}
 	}
 }

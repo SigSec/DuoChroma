@@ -23,7 +23,7 @@ public class TutorialText : MonoBehaviour {
 		// Set the colours for each text box to depend on its vertical position
 		for (int i = 0; i < arrayOfText.Length; i++)
 		{
-			if (arrayOfText[i].gameObject.GetComponent<RectTransform>().anchoredPosition.y > 750)
+			if (arrayOfText[i].gameObject.GetComponent<RectTransform>().anchoredPosition.y < 750)
 			{
 				arrayOfText[i].color = new Color(138f / 255f, 028f / 255f, 053f / 255f, 1f);
 				arrayOfActiveColours[i] = "#d13b3b";

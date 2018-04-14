@@ -6,115 +6,97 @@ Date:		10/04/2018 19:12
 */
 
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
-	// Public variables.
-	public SpriteRenderer rHpSprite;
-	public SpriteRenderer gHpSprite;
+	private PlayerManager _playerManager;
 
-	[HideInInspector] public float rHp;
-	[HideInInspector] public float gHp;
+	private SpriteRenderer _healthPlaneR;
+	private SpriteRenderer _healthPlaneG;
 
-	[Range(1f, 60f)]
-	public float rHpMax;
-	[Range(-60f, 0f)]
-	public float rHpDecay;
-	[Range(0f, 60f)]
-	public float rHpRegen;
+	private float _healthG;
+	private float _healthR;
 
-	[Range(1f, 60f)]
-	public float gHpMax;
-	[Range(-60f, 0f)]
-	public float gHpDecay;
-	[Range(0f, 60f)]
-	public float gHpRegen;
-	// Private variables.
+	private float _healthDecay;
+	private float _healthRegen;
+	private float _healthMax;
+	private float _healingSpeed;
 
-	private float _healRate;
-
-	private bool _healRed;
-	private bool _isRed;
-	private bool _isHealing = false;
-	// Custom functions.
-
-	public void Heal(bool red, float rate)
-	{
-		_isHealing = true;
-		_healRed = red;
-		_healRate = rate;
-	}
-	// Monobehaviour functions.
+	public bool isHealing;
 
 	private void Awake()
 	{
-		rHp = rHpMax;
-		gHp = gHpMax;
+		// Assign components.
+		_playerManager = GetComponent<PlayerManager>();
+
+		_healthPlaneR = GameObject.Find("HealthPlaneR").GetComponent<SpriteRenderer>();
+		_healthPlaneG = GameObject.Find("HealthPlaneG").GetComponent<SpriteRenderer>();
+
+		// Assign variables based on Player Manager.
+		_healthMax = _playerManager.healthMax;
+		_healthRegen = _playerManager.healthRegen;
+		_healthDecay = _playerManager.healthDecay;
+		_healingSpeed = _playerManager.healingSpeed;
+
+		_healthG = _healthMax;
+		_healthR = _healthMax;
 	}
 
 	private void Update()
 	{
-		_isRed = gameObject.GetComponent<GravityManager>().isRed;
+		// Update variables.
+		bool isRed = _playerManager.isRed;
 
-		// Heal the player.
-		if (_isHealing)
+		// Check if the player is dead.
+		if (_healthG <= 0 || _healthR <= 0)
 		{
-			if (_healRed)
-			{
-				rHp += _healRate * Time.deltaTime;
-			}
-
-			else
-			{
-				gHp += _healRate * Time.deltaTime;
-			}
+			_playerManager.Restart();
 		}
 
-		// Check if dead
-		if (rHp <= 0 || gHp <= 0)
-		{
-			// reload scene if dead.
-			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-		}
+		// Adjust health values depending on which side the player is on.
 		else
 		{
-			// Decay and regen health.
-			if (_isRed)
+			if (isRed)
 			{
-				rHp += rHpDecay * Time.deltaTime;
-				gHp += gHpRegen * Time.deltaTime;
+				_healthR -= _healthDecay * Time.deltaTime;
+
+				if (_healthG < _healthMax)
+				{
+					_healthG += _healthRegen * Time.deltaTime;
+				}
+
+				if (isHealing && _healthR < _healthMax)
+				{
+					_healthR += _healingSpeed * Time.deltaTime;
+				}
+				else
+				{
+					isHealing = false;
+				}
 			}
+
 			else
 			{
-				gHp += gHpDecay * Time.deltaTime;
-				rHp += rHpRegen * Time.deltaTime;
-			}
-			
-			// Control value overflow
-			if (rHp > rHpMax)
-			{
-				rHp = rHpMax;
-				if (_isHealing && _healRed)
+				_healthG -= _healthDecay * Time.deltaTime;
+
+				if (_healthR < _healthMax)
 				{
-					_isHealing = false;
+					_healthR += _healthRegen * Time.deltaTime;
+				}
+
+				if (isHealing && _healthG < _healthMax)
+				{
+					_healthG += _healingSpeed * Time.deltaTime;
+				}
+				else
+				{
+					isHealing = false;
 				}
 			}
-
-			if (gHp > gHpMax)
-			{
-				gHp = gHpMax;
-
-				if (_isHealing && !_healRed)
-				{
-					_isHealing = false;
-				}
-			}
-
-			// Update the fade plane
-
-			rHpSprite.color = new Color(rHpSprite.color.r, rHpSprite.color.g, rHpSprite.color.b, 1 - (rHp / rHpMax));
-			gHpSprite.color = new Color(gHpSprite.color.r, gHpSprite.color.g, gHpSprite.color.b, 1 - (gHp / gHpMax));
 		}
+
+		// Update the opacity of the planes, to display health to the player.
+		_healthPlaneG.color = new Color(_healthPlaneG.color.r, _healthPlaneG.color.g, _healthPlaneG.color.b, 1 - (_healthG / _healthMax));
+		_healthPlaneR.color = new Color(_healthPlaneR.color.r, _healthPlaneR.color.g, _healthPlaneR.color.b, 1 - (_healthR / _healthMax));
 	}
 }
